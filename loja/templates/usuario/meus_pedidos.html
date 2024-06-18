@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block body %}
+<main class="principal">
+    <section class="conta">
+      <div class="conta__container">
+        <div class="checkout__titulos">
+          <p class="checkout__titulo">Meus pedidos</p>
+        </div>
+
+        {% for pedido in pedidos %}
+        <div class="pedido">
+          <div class="pedido__cabecalho">
+            <div>
+              <p><b>Data do pedido</b></p>
+              <p>{{ pedido.data_finalizacao }}</p>
+            </div>
+
+            <div>
+              <p><b>Total</b></p>
+              <p>R$ {{ pedido.total }}</p>
+            </div>
+
+            <div>
+              <p><b>Número do pedido</b></p>
+              <p>{{ pedido.codigo_transacao }}</p>
+            </div>
+          </div>
+          <div>
+            <div>
+              <p style="margin: 10px">Local de entrega: {{ pedido.endereco.cep }}, {{ pedido.endereco.cidade }}-{{ pedido.endereco.estado }}</p>
+            </div>
+            <div class="pedido__cabecalho" align=left>
+              <p><b>Status: </b>{{ pedido.status.nome }}</p>
+              <p></p>
+            </div>
+          </div>
+          <hr>
+        {% endfor %}
+      </div>
+    </section>
+  </main>
+{% endblock %}

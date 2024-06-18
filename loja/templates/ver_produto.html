@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block body %}
+
+<main class="principal principal--padding-b principal--gap" xmlns="http://www.w3.org/1999/html">
+    <section class="s-produto">
+      <div class="s-produto__carrossel">
+        <div class="s-produto__carrossel-itens">
+          <div class="s-produto__carrossel-img">
+            <img
+              src="{{ produto.imagem.url }}"
+              alt="Imagem Carrossel 1"
+            />
+          </div>
+          <div class="s-produto__carrossel-img" style="overflow: hidden;">
+            <img
+              src="{{ produto.imagem.url }}"
+              alt="Imagem Carrossel 2"
+              style="transform: scale(1.6);"
+            />
+          </div>
+        </div>
+
+        <div class="s-produto__carrossel-botoes">
+          <div
+            class="s-produto__carrossel-botao s-produto__carrossel-botao--selecionado"
+          ></div>
+          <div class="s-produto__carrossel-botao"></div>
+          <div class="s-produto__carrossel-botao"></div>
+          <div class="s-produto__carrossel-botao"></div>
+          <div class="s-produto__carrossel-botao"></div>
+        </div>
+      </div>
+
+      <div class="s-produto__informacoes">
+        <div class="s-produto__breadcrumbs">
+          <span><a href="{% url 'loja' %}">Loja</a></span>
+          <span><a href="{% url 'loja' %}{{ produto.categoria.slug }}">{{ produto.categoria.nome }}</a></span>
+          <span><a href="{% url 'loja' %}{{ produto.categoria.slug }}-{{ produto.tipo.slug }}">{{ produto.tipo.nome }}</a></span>
+          <span>
+            <p>{{ produto.nome }}</p>
+          </span>
+        </div>
+
+        <div class="s-produto__infos">
+          <h1 class="s-produto__titulo">Quadro: {{ produto.nome }}</h1>
+          <p class="s-produto__preco">R$ {{ valor }}</p>
+          <br />
+          <p class="s-produto__cor-nome">Tamanho: <span>{{ tamanho_selecionado.nome }}</span></p>
+          <p class="s-produto__cor-nome">Selecione o tamanho para poder adicionar a sacola</p>
+            <div>
+              <div class="menu__categorias">
+
+                {% for tamanho in tamanhos %}
+                  <div>
+                    <a href="{% url 'ver_produto' produto.id tamanho.id %}" class="menu_tamanho_ver_produtos">{{ tamanho.nome }}</a>
+                  </div>
+                {% endfor %}
+
+              </div>
+            </div>
+
+          {% if tem_estoque %}
+            {% if tamanho_selecionado %}
+              <form method="POST" action="{% url 'adicionar_carrinho' produto.id %}">
+                {% csrf_token %}
+                <input type="hidden" name="tamanho" value="{{ tamanho_selecionado.id }}">
+                <button type="submit" class="s-produto__adicicionar">Adicionar à sacola</button>
+              </form>
+            {% endif %}
+          {% else %}
+            <h3>Item fora de estoque</h3>
+          {% endif %}
+        </div>
+
+        
+
+        <div class="s-produto__descricao">
+          <p class="s-produto__descricao-titulo">Descrição do produto</p>
+          <div class="s-produto__descricao-textos">
+            <p>
+              <b>Quadro: </b>{{ produto.nome }}
+            </p>
+            <p>
+              <b>COMPOSIÇÃO</b> <br />
+              Borda de infinita <br>
+              Imagem impressa em alta definição<br>
+            </p>
+            <p>
+              <b>CÓDIGO DO PRODUTO</b> <br />
+              Ref: <span>{{ produto.id }}</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {% if similares %}
+    <section class="similares">
+      <h2 class="similares__titulo">
+        Gostou desse produto? Veja itens similares
+      </h2>
+
+      <div class="similares__container">
+        {% for similar in similares %}
+        <a
+          href="{% url 'ver_produto' similar.id %}"
+          class="produto"
+        >
+          <div class="produto__imagem">
+            <img
+              src="{{ similar.imagem.url }}"
+              alt="Imagem do Produto"
+            />
+          </div>
+          <div class="produto__textos">
+            <p class="produto__titulo">{{ similar.nome }}</p>
+            <div class="produto__preco">
+              <p class="produto__avista">R$ {{ similar.preco }}</p>
+            </div>
+          </div>
+        </a>
+        {% endfor %}
+      </div>
+    </section>
+    {% endif %}
+  </main>
+
+{% endblock %}

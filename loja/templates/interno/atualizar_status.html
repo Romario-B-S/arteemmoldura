@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block body %}
+
+<a href="{% url 'gerenciar_loja' %}">Gerenciar Loja</a>
+<hr>
+<form action="{% url 'atualizar_status' %}" method="post">
+    {% csrf_token %}
+    <div class="container">
+        <div class="left">
+            <table>
+                <tr>
+                    <th></th>
+                    <th>Pedido</th>
+                    <th>Cliente</th>
+                    <th>Produto</th>
+                    <th>Tamanho</th>
+                    <th>Status</th>
+                </tr>
+                {% for pedido in pedidos %}
+                <tr>
+                    <td>
+                         <input type="checkbox" name="pedido" value="{{ pedido.id }}">
+                    </td>
+                    <td>{{ pedido.id }}</td>
+                    <td>{{ pedido.cliente.nome }}</td>
+                    <td>{{ pedido.produto.nome }}</td>
+                    <td>{{ pedido.tamanho.nome }}</td>
+                    <td>{{ pedido.status.nome }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        <div class="right">
+            <table>
+                <tr>
+                    <th></th>
+                    <th>Status</th>
+                </tr>
+                {% for item in status %}
+                <tr>
+                    <td>
+                         <input type="checkbox" name="status" value="{{ item.id }}">
+                    </td>
+                    <td>{{ item.nome }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+    </div>
+    <hr>
+    <hr>
+    <button type="submit">Atualizar Status</button>
+</form>
+
+{% endblock %}
+

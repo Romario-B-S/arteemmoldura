@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block body %}
+
+<main class="principal">
+    {% if cliente_existente %}
+    <section class="carrinho">
+      <div class="sacola">
+        <div class="sacola__titulos">
+          <h1 class="sacola__titulo">Sacola</h1>
+          <p>
+            Confira seu pedido e finalize no botão ao lado para aproveitar esse preço especial
+          </p>
+        </div>
+
+        <table class="tabela">
+          <tr>
+            <th></th>
+            <th>Produtos</th>
+            <th>Tamanho</th>
+            <th>Valor</th>
+            <th>Quantidade</th>
+            <th>Total</th>
+          </tr>
+          {% for item in pedidos %}
+          <tr>
+            <td class="tabela__qtd">
+              <div class="tabela__quantidade">
+                <form method="POST" action="{% url 'pedido_selecionado' item.produto.id %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="tamanho" value="{{ item.tamanho.id }}">
+                      {% if item.adicheckout == True %}
+                        <button type="submit" style="color: green;">V</button>
+                      {% else %}
+                        <button type="submit"></button>
+                      {% endif %}
+                </form>
+              </div>
+            </td>
+            <td>
+              <div class="tabela__imagem">
+                <img
+                  src="{{ item.produto.imagem.url }}"
+                  alt="{{ item.produto.nome }}"/>
+              </div>
+            </td>
+            <td>
+              <p class="tabela__preco tabela__preco--total">{{ item.tamanho.nome }}</p>
+            </td>
+            <td class="tabela__preco-unit">
+              <p class="tabela__preco">  R$ {{ item.produto.preco }}</p>
+              <p class="tabela__preco">+ R$ {{ item.tamanho.adicional }}</p>
+            </td>
+
+            <td class="tabela__qtd">
+              <div class="tabela__quantidade">
+                <form method="POST" action="{% url 'remover_carrinho' item.produto.id %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="tamanho" value="{{ item.tamanho.id }}">
+                    <button type="submit" id="-">-</button>
+                </form>
+                <span>{{ item.quantidade }}</span>
+                <form method="POST" action="{% url 'adicionar_carrinho' item.produto.id %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="tamanho" value="{{ item.tamanho.id }}">
+                    <button type="submit" id="+">+</button>
+                </form>
+              </div>
+            </td>
+            <td>
+              <p class="tabela__preco tabela__preco--total">R$ {{ item.total }}</p>
+            </td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
+        <div class="subtotal">
+          <div class="subtotal__infos">
+            <p>Quantidade de Produtos selecionados</p>
+            <p>{{ quantidade_selecionada }}</p>
+          </div>
+
+          <div class="subtotal__infos subtotal__infos--sborda">
+            <p>Total selecionado</p>
+            <p>R$ {{ total_selecionado }}</p>
+          </div>
+
+          <a href="{% url 'checkout' %}" class="subtotal__botao">Ir ao checkout</a>
+        </div>
+    </section>
+    {% else %}
+      <h3>Seu carrinho está vazio</h3>
+      <a href="{% url 'loja' %}">Visite nossa loja</a>
+    {% endif %}
+  </main>
+{% endblock %}
+
+

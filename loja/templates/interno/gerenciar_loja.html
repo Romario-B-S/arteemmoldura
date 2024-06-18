@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block body %}
+<a href="{% url 'atualizar_status' %}">Atualizar Status</a>
+<main>
+    <section class="conta">
+        <form action="{% url 'gerenciar_loja' %}" method="POST">
+        {% csrf_token %}
+            <div>
+                <div>
+                    <h4>Tipo de Transação</h4>
+                    <hr>
+                    <div class="filtro_financeiro">
+                        <h6>Compras</h6>
+                        <input name="tipo_transacao" type="radio" value="compras">
+                    </div>
+                    <div class="filtro_financeiro">
+                        <h6>Vendas</h6>
+                        <input name="tipo_transacao" type="radio" value="vendas">
+                    </div>
+                    <div class="filtro_financeiro">
+                        <h6>Todos</h6>
+                        <input name="tipo_transacao" type="radio" value="todos" checked>
+                    </div>
+                </div>
+                <div>
+                    <h4>Forma de pagamento</h4>
+                    <hr>
+                    <div class="filtro_financeiro">
+                        <h6>Dinheiro</h6>
+                        <input name="forma_pagamento" type="radio" value=dinheiro>
+                    </div>
+                    <div class="filtro_financeiro">
+                        <h6>Transferência</h6>
+                        <input name="forma_pagamento" type="radio" value="transferencia">
+                    </div>
+                    <div class="filtro_financeiro">
+                        <h6>Boleto</h6>
+                        <input name="forma_pagamento" type="radio" value="boleto">
+                    </div>
+                    <div class="filtro_financeiro">
+                        <h6>C. Crédito</h6>
+                        <input name="forma_pagamento" type="radio" value="credito">
+                    </div>
+                    <div class="filtro_financeiro">
+                        <h6>C. Debito</h6>
+                        <input name="forma_pagamento" type="radio" value="debito">
+                    </div>
+                    <div class="filtro_financeiro">
+                        <h6>Todos</h6>
+                        <input name="forma_pagamento" type="radio" value="todos" checked>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <h4>Finalizado</h4>
+                    <hr>
+                    <div class="filtro_financeiro">
+                        <h6>Sim</h6>
+                        {% if finalizado == "sim" %}
+                            <input name="finalizado" type="radio" value="sim" checked>
+                        {% else %}
+                            <input name="finalizado" type="radio" value="sim">
+                        {% endif %}
+                    </div>
+                    <div class="filtro_financeiro">
+                        <h6>Não</h6>
+                        {% if finalizado == "nao"%}
+                            <input name="finalizado" type="radio" value="não" checked>
+                        {% else %}
+                            <input name="finalizado" type="radio" value="nao">
+                        {% endif %}
+                    </div>
+                    <div class="filtro_financeiro">
+                        <h6>Todos</h6>
+                        {% if finalizado == "todos" %}
+                            <input name="finalizado" type="radio" value="todos" checked>
+                        {% else %}
+                            <input name="finalizado" type="radio" value="todos">
+                        {% endif %}
+                    </div>
+            </div>
+            <button type="submit">Filtrar</button>
+        </form>
+        <div class="resumo_gerencia">
+            <h4>Total:</h4>
+            <h4 class="retorno_resumo">R$ {{ soma_total }}</h4>
+            <h4>Quantidade de pedidos:</h4>
+            <h4 class="retorno_resumo">{{ quantidade_pedidos }}</h4>
+            <h4>Quantidade de produtos:</h4>
+            <h4 class="retorno_resumo">{{ quantidade_produtos }}</h4>
+        </div>
+
+
+        <table class="tabela" width=98%  align="left">
+            <tr>
+                <th>Pedido</th>
+                <th></th>
+                <th>Cliente</th>
+                <th></th>
+                <th>Produto</th>
+                <th></th>
+                <th>Preço unitário</th>
+                <th></th>
+                <th>Tamanho</th>
+                <th></th>
+                <th>Adicional do Tamanho</th>
+                <th></th>
+                <th>Quantidade</th>
+                <th></th>
+                <th>Total</th>
+                <th></th>
+                <th>Finalização</th>
+            </tr>
+            {% for item in pedidos %}
+            <tr>
+                <th>{{ item.id }}<th>
+                <th>{{ item.cliente.email }}<th>
+                <th>{{ item.produto.nome }}<th>
+                <th>{{ item.produto.preco }}<th>
+                <th>{{ item.tamanho.nome }}<th>
+                <th>{{ item.tamanho.adicional }}<th>
+                <th>{{ item.quantidade }}<th>
+                <th>{{ item.total }}<th>
+                {% if item.data_finalizacao %}
+                    <th>{{ item.data_finalizacao }}<th>
+                {% else %}
+                    <th><th>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </table>
+    </section>
+{% endblock %}
