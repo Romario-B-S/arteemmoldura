@@ -26,6 +26,7 @@ body {
     border-collapse: collapse;
     font-family: Arial;font-size:0.8em;
     width: 100%;
+
 }
 .tabela tr{
     background: #EEEEE0;
@@ -74,6 +75,7 @@ table {
     width: 100%;
     border-collapse: collapse;
 }
+
 
 
 
