@@ -420,6 +420,7 @@ def fazer_logout(request):
 @login_required
 def gerenciar_loja(request):
     if request.user.groups.filter(name="equipe").exists():
+        data_finalizacao_formatada = []
         finalizado = "todos"
         pedidos = Pedido.objects.filter()
         soma_total = 0
@@ -440,6 +441,7 @@ def gerenciar_loja(request):
                     soma_total += item.total
                     quantidade_pedidos += 1
                     quantidade_produtos += item.quantidade
+                    item.data_finalizacao_formatada = item.data_finalizacao.strftime("%d/%m/%Y")
         else:
             pedidos = Pedido.objects.filter()
             for item in pedidos:
@@ -448,15 +450,14 @@ def gerenciar_loja(request):
                 quantidade_produtos += item.quantidade
 
         context = {"pedidos": pedidos, "finalizado": finalizado, "soma_total": soma_total, "quantidade_pedidos": quantidade_pedidos,
-                   "quantidade_produtos": quantidade_produtos}
+                   "quantidade_produtos": quantidade_produtos, "data_finalizacao_formatada": data_finalizacao_formatada}
         return render(request, "interno/gerenciar_loja.html", context=context)
     else:
         redirect('loja')
 
 def atualizar_status(request):
-    pedidos = Pedido.objects.filter(finalizado=True)
     status = Status_pedido.objects.all()
-    pedidos = pedidos.order_by('status__nome')
+    pedidos = Pedido.objects.filter(finalizado=True).order_by('status__nome')
     if request.method == "POST":
         if request.POST.getlist('pedido') and request.POST.get('status'):
             dados = request.POST.getlist('pedido')
