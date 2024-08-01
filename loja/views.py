@@ -194,8 +194,9 @@ def finalizar_pedido(request):
         else:
             id_endereco = dados.get("endereco")
             endereco = Endereco.objects.get(id=id_endereco)
-            pedido.endereco = endereco
-            pedido.save()
+            for item in pedido:
+                item.endereco = endereco
+                item.save()
 
         if not request.user.is_authenticated:
             email = dados.get("email")
@@ -207,9 +208,10 @@ def finalizar_pedido(request):
                 clientes = Cliente.objects.filter(email=email)
                 if clientes:
                     pedido.cliente = clientes[0]
+                    pedido.save()
                 else:
                     pedido.cliente.email = email
-                    pedido.cliente.save()
+                    pedido.save()
 
         quantidade_de_pedidos = 0
         for item in pedido:
@@ -221,7 +223,7 @@ def finalizar_pedido(request):
         else:
             link = request.build_absolute_uri(reverse('finalizar_pagamento'))
             link_pagamento, id_pagamento = criar_pagamento(pedido, link)
-            status = Status_pedido.object.get(id=2)
+            status = Status_pedido.objects.get(id=2)
             if quantidade_de_pedidos > 1:
                 for item in pedido:
                     codigo_transacao = f"C{item.cliente.id}-{datetime.now().timestamp()}"
